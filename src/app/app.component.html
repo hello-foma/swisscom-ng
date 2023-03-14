@@ -1,0 +1,36 @@
+<mat-drawer-container class="example-container" autosize [hasBackdrop]="true">
+  <mat-toolbar color="primary">
+    <button *ngIf="!isMenuOpened" mat-icon-button color="accent" (click)="toggleMenu()">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <span id="title">Example</span>
+    <span class="example-spacer"></span>
+  </mat-toolbar>
+  <mat-drawer #drawer class="example-sidenav" mode="side">
+    <mat-list role="list">
+      <mat-list-item role="listitem">
+        <button mat-button>
+          <mat-icon>home</mat-icon>
+          <span>Home</span>
+        </button>
+      </mat-list-item>
+      <mat-list-item role="listitem">
+        <button mat-button>
+          <mat-icon>settings</mat-icon>
+          <span>Config</span>
+        </button>
+      </mat-list-item>
+      <mat-list-item role="listitem">
+        <button mat-button>
+          <mat-icon>help</mat-icon>
+          <span>Help</span>
+        </button>
+      </mat-list-item>
+    </mat-list>
+  </mat-drawer>
+
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+
+</mat-drawer-container>
