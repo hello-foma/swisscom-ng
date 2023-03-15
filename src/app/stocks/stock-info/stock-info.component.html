@@ -1,0 +1,11 @@
+<mat-card *ngIf="(selectedStock | async) as selectedStock" class="example-card">
+  <mat-card-subtitle>Symbol</mat-card-subtitle>
+  <mat-card-title>{{selectedStock.displaySymbol}}</mat-card-title>
+  <mat-card-content>
+    {{selectedStock.description}}
+  </mat-card-content>
+  <mat-divider inset></mat-divider>
+  <mat-card-footer class="footer">
+    Price: {{selectedStock.price.current}} | Currency: {{selectedStock.currency}}
+  </mat-card-footer>
+</mat-card>

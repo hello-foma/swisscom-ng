@@ -1,77 +1,53 @@
-import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { select, Store } from '@ngrx/store';
-import { map, startWith, switchMap } from 'rxjs';
-import { loadStocks, selectStock } from './actions';
-import { selecStockById, selectAllStockEntries, selectSelectedStock } from './selectors';
-import { AppState } from './state';
-import { Stock } from './stock';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  Subject,
+  takeUntil,
+} from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Actions, ofType } from '@ngrx/effects';
+
+import { stockHttpError } from './slice/stocks.actions';
+import { StocksService } from './stocks.service';
 
 @Component({
-  selector: 'stocks',
+  selector: 'page-stocks',
   templateUrl: './stocks.component.html',
   styleUrls: ['./stocks.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [StocksService]
 })
-export class StocksComponent{
-  autocomplete = new FormControl();
-  filteredOptions: Stock[] = [];
-  objects: Stock[] = []
-  stock: Stock | undefined;
+export class StocksComponent implements OnInit, OnDestroy {
+  private readonly destroyEvent = new Subject<void>();
 
-  constructor(readonly client: HttpClient, readonly store: Store<AppState>) {
-    this.autocomplete.valueChanges.pipe(
-      startWith(''),
-      map(value => this._filter(value)),
-    ).subscribe(
-      v => {
-        this.filteredOptions = v;
-      }
-    );
+  readonly isLoading = this.stocks.getIsLoading();
 
-    this.store.pipe(
-      select(selectAllStockEntries),
-      map(stocks => stocks.map(e => e.stock)))
-      .subscribe(arr => {
-        this.objects = arr;
+  constructor(
+    private readonly stocks: StocksService,
+    private readonly snackBar: MatSnackBar,
+    private readonly actions: Actions
+  ) { }
+
+  ngOnInit() {
+    this.initErrorMessage();
+  }
+
+  ngOnDestroy() {
+    this.destroyEvent.next();
+  }
+
+  private initErrorMessage() {
+    this.actions.pipe(
+      ofType(stockHttpError),
+      takeUntil(this.destroyEvent),
+    ).subscribe(({error}) => {
+      console.error(error);
+      this.snackBar.open(error.error, 'Close',{
+        verticalPosition: 'top',
       });
-
-      this.store.pipe(
-        select(selectSelectedStock),
-        switchMap(s => this.store.select(selecStockById(s.symbol))),
-        map(s => s?.stock),
-      )
-      .subscribe(selected => {
-        this.stock = selected;
-      });
-
-    this.store.dispatch(loadStocks());
+    });
   }
 
-  private _filter(value: string): Stock[] {
-    const filterValue = value?.toLowerCase();
-
-    if (!filterValue || filterValue.length < 2) {
-      return [];
-    }
-
-    return this.objects.filter(objects => objects.displaySymbol.toLowerCase().includes(filterValue));
-  }
-
-  public callApi() {
-    this.store.dispatch(loadStocks());
-  }
-
-  public selectSymbol(item: MatAutocompleteSelectedEvent) {
-    console.log(item.option.value);
-    let found = this.objects.find(element => element.symbol == item.option.value);
-
-    if (!found) {
-      return;
-    }
-
-    this.store.dispatch(selectStock({ stock: found }));
-    this.autocomplete.reset();
+  public async updateData() {
+    this.stocks.updateData();
   }
 }

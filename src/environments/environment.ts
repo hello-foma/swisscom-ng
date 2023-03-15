@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  finnhubApiUrl: 'https://finnhub.io/api/v1/',
+  finnhubToken: 'cg83uehr01qsgaf0li6gcg83uehr01qsgaf0li70',
 };
 
 /*

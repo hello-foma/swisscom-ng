@@ -1,0 +1,17 @@
+<form class="example-form">
+  <mat-form-field class="example-full-width" appearance="fill">
+    <mat-label>Ticker</mat-label>
+    <input type="text"
+           placeholder="Pick one stock ticker"
+           aria-label="Ticker"
+           matInput
+           [formControl]="autocomplete"
+           [matAutocomplete]="auto">
+    <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" (optionSelected)="selectSymbol($event)">
+      <mat-option *ngFor="let option of filteredOptions | async; trackBy: trackByStockSymbol" [value]="option.symbol">
+        <span>{{option.description}}</span> |
+        <small>Currency: {{option.currency}}</small>
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+</form>

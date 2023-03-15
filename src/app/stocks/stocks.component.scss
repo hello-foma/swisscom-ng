@@ -1,14 +1,8 @@
-.example-form {
-    min-width: 150px;
-    max-width: 500px;
-    width: 100%;
-}
-
-.example-full-width {
-    width: 100%;
-}
-
-.example-card {
-    max-width: 400px;
-    margin: 30px auto;
+.spinner {
+  width: 100%;
+  padding: 40px;
+  display: flex;
+  justify-items: center;
+  justify-content: center;
+  box-sizing: border-box;
 }

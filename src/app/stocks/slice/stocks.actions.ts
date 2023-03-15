@@ -1,6 +1,8 @@
 import { createAction, props } from '@ngrx/store';
-import { StockEntry } from './state';
-import { Stock } from './stock';
+
+import { Price } from '../stocks-data-provider/price.model';
+
+import { StockEntry } from './stock-entry.type';
 
 export const loadStocks = createAction(
     '[Stocks] Load'
@@ -13,15 +15,25 @@ export const updateStocks = createAction(
 
 export const updateStock = createAction(
     '[Stocks] Update one',
-    props<{ stock: StockEntry | undefined }>(),
+    props<{ stock: StockEntry | null }>(),
 );
 
 export const selectStock = createAction(
     '[Stocks] Select',
-    props<{ stock: Stock }>(),
+    props<{ stockId: string }>(),
 );
 
 export const loadStockPrice = createAction(
     '[Stocks] Load price',
     props<{ symbol: string }>(),
+);
+
+export const updateStockPrice = createAction(
+  '[Stocks] Update price',
+  props<{ symbol: string, price: Price }>(),
+);
+
+export const stockHttpError = createAction(
+  '[Stocks] http error',
+  props<{ error: any }>(),
 );
